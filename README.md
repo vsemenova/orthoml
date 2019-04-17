@@ -19,10 +19,10 @@ where logmove stands for log weekly sales, logprice is log average week price, a
 
 ### Figure 3: Own price elasticities by the months of a calendar year as estimated by Orthogonal Least Squares
 
-### Figure 4: Distribution of Own price elasticities for selected Protein Products as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
+## Figure 4-6: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
 
-### Figure 5: Distribution of Own price elasticities for selected Non-Edible Products as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
-
-### Distribution of Own price elasticities for selected Snacks Products as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
+### Figure 4: Protein Products
+### Figuer 5: Non-Edibles
+### Figure 6: Snacks
 
 ### Table 2: Estimated Cross Price Elasticity for Drinks
