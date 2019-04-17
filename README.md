@@ -6,7 +6,7 @@ Semenova, Goldman, Chernozhukov, Taddy (2017)
 ## Data
 PEAggData.csv contains anonymized grocery sales data from a food distributor. The grocery items are sold at 8 different sites, via 2 different channels (Collection, Delivery), in the years 2012-2017. Using catalog descriptions, we organize the products into a tree (see Figure 1 below). 
 
-![Figure_1](https://user-images.githubusercontent.com/21160786/56326387-d40f8200-6143-11e9-8507-9811aeda34f1.png)
+![Figure_1] (![Figure_1 copy](https://user-images.githubusercontent.com/21160786/56326955-218cee80-6146-11e9-8f4b-2e9aa128ac3d.png))
 
 To preserve the distributor's anonymity, we replaced the names of the nodes by numbers. The resulting data set takes the form:
 
