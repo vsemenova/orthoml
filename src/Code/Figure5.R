@@ -3,7 +3,7 @@
 
 rm(list=ls())
 # set directoryname
-directoryname<-"~"
+directoryname<-"~/orthoml/src"
 setwd(directoryname)
 source(paste0(directoryname,"/Code/Source.R"))
 figdirectory<-paste0(directoryname,"/Output/Figures/")

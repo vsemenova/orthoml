@@ -55,7 +55,7 @@ drop_multicollinear_categories<-function(categoryname) {
 #### Create box and whisker plots to plot elasticities
 
 boxwhisker<-function(data,ci_alpha=0.05,
-                     heterog_pattern,limitsy=c(-4,1),xtext=heterog_pattern,outname=NULL,subset.name="",...) {
+                     het.name,limitsy=c(-4,1),xtext=het.name,outname=NULL,subset.name="",...) {
 
  
  
@@ -65,7 +65,7 @@ boxwhisker<-function(data,ci_alpha=0.05,
   
   
   if (is.null(outname)) {
-    outname<-paste0(level1_inds,heterog_pattern)
+    outname<-paste0(level1_inds,het.name)
   }
 
     # CI is std.error times the t-statistics

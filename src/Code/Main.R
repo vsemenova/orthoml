@@ -10,7 +10,7 @@
 # read in data
 # 
 
-main<-function(categoryname,
+main<-function(categoryname,het.name,
                method.treat=cv.gamlr,
                method.outcome = cv.gamlr,
                num_splits=2,
@@ -23,7 +23,16 @@ main<-function(categoryname,
   
   ## get fixed effects representation of categorical variables Level1:Level5
   ### read in data
-  my_data<-read.csv(paste0(directoryname,"/Data/AggData",categoryname,".csv"))
+  
+  # Dairy file is too large for gihub; split into 2 halfs
+  if (categoryname =="Dairy"){
+    my_data1<-read.csv(paste0(directoryname,"/Data/AggDataDairyPart1.csv"))
+    my_data2<-read.csv(paste0(directoryname,"/Data/AggDataDairyPart2.csv"))
+    my_data<-rbind(my_data1,my_data2)
+  } else {
+    my_data<-read.csv(paste0(directoryname,"/Data/AggData",categoryname,".csv"))
+  }
+ 
   colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
   my_data$RowID<-as.character(my_data$RowID)
   ## treatment is logprice - logprice_lag = log (price/price_lag)=log(priceratio)
@@ -37,10 +46,10 @@ if (run_fs) {
                   method.outcome = method.outcome,
                   num_splits=2,...)
   print(paste0("Number of Nas in the first stage", as.character(sum(is.na(fs)))))
-  write.csv(fs,paste0("~/Output/FirstStage",categoryname,".csv"))
+  write.csv(fs,paste0(directoryname,"/Output/FirstStage",categoryname,".csv"))
 } else {
   # otherwise, load residuals
-  fs<-read.csv(paste0("~/Output/FirstStage",categoryname,".csv"))
+  fs<-read.csv(paste0(directoryname,"/Output/FirstStage",categoryname,".csv"))
  
 } # make sure there are no NAs in the residuals
   if (sum(is.na(fs$treat) + is.na(fs$outcome))>0) {
@@ -61,7 +70,7 @@ if (run_fs) {
   # ss is a data.frame with 2 columns = estimate  st.error.hat for each method in second_stage_method_names
   # each estimate corresponds to each unique category/produdct determined by heterog_pattern
   ss<-second_stage(my_data=my_data[subset_inds,],
-                   fs=fs[subset_inds,],categoryname=categoryname, ...)
+                   fs=fs[subset_inds,],categoryname=categoryname,het.name=het.name, ...)
   
   
   ## Code below is specific to Figures 
@@ -77,10 +86,18 @@ if (run_fs) {
       colnames(ss$OLS)[ colnames(ss$OLS)==het.name]<-"xbreaks"
       ss$OLS<-ss$OLS[order(ss$OLS$month),]
     } else {
-      ss$OLS<-left_join(ss$OLS,select(my_data,one_of("RowID",het.name)),by=c("RowID"="RowID")) 
-      colnames(ss$OLS)[ colnames(ss$OLS)==het.name]<-"xbreaks"
+      if (categoryname == "Drinks") {
+        ss$OLS<-left_join(ss$OLS,select(my_data,one_of("RowID",het.name,"Level2")),by=c("RowID"="RowID")) 
+        colnames(ss$OLS)[ colnames(ss$OLS)==het.name]<-"xbreaks"
+        ss$OLS<-ss$OLS[order(ss$OLS$Level2),]
+      } else {
+        ss$OLS<-left_join(ss$OLS,select(my_data,one_of("RowID",het.name,"Level1")),by=c("RowID"="RowID")) 
+        colnames(ss$OLS)[ colnames(ss$OLS)==het.name]<-"xbreaks"
+        ss$OLS<-ss$OLS[order(ss$OLS$Level1),]
+      }
+    
     }
-    boxwhisker(data=ss$OLS,subset.name=subset.name,...)
+    boxwhisker(data=ss$OLS,subset.name=subset.name,het.name=het.name,...)
   } else {
     # This branch holds for Figure 5
    

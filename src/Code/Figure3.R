@@ -6,7 +6,7 @@
 
 rm(list=ls())
 # set directoryname
-directoryname<-"~"
+directoryname<-"~/orthoml/src"
 setwd(directoryname)
 source(paste0(directoryname,"/Code/Source.R"))
 figdirectory<-paste0(directoryname,"/Output/Figures/")
@@ -30,7 +30,7 @@ second_stage_method_names<<-c("OLS")
 
 main(categoryname="Drinks",het.name="Level1_Name",second_stage_method_names=second_stage_method_names,
      run_fs=FALSE,outname="DrinksLevel1")
-## Dairy
+
 main(categoryname="Dairy",het.name="Level1_Name", run_fs=FALSE,second_stage_method_names=second_stage_method_names,
      outname="DairyLevel1")
 
