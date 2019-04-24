@@ -15,36 +15,21 @@ To preserve the distributor's anonymity, we replaced the names of the nodes at L
 
 ## Code
 
-To replicate the results, open Rstudio (or R) and run
+To replicate the results:
 
-'install.packages(c)'
-
+1. Download the github repo 
+2. Open Rstudio (or R) and run
+`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr", "plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")'`
 
 ### Figure 3: Own price elasticities as estimated by Double Machine Learning
-To replicate the results:
-1. Open 'Figure3.R'
 
-The estimation methods are contained in 
 
-### Figure 3: Own price elasticities by the months of a calendar year as estimated by Orthogonal Least Squares
+### Figure 4: Own price elasticities by the months of a calendar year as estimated by Orthogonal Least Squares
 
 To replicate the results, run:
 
 The estimation methods are contained in 
 
-### Figure 4-6: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
-To replicate the results, run:
+### Figure 5: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
 
-The estimation methods are contained in 
 
-### Figure 4: Protein Products
-where k=4
-### Figure 5: Non-Edibles
-where k=5
-### Figure 6: Snacks
-where k=6
-
-### Table 2: Estimated Cross Price Elasticity for Drinks
-To replicate the results, run:
-
-The estimation methods are contained in 
