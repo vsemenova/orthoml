@@ -53,3 +53,4 @@ We see that Lasso estimates are most concenrated (shrinked towards homogenous sp
 "Orthogonal Machine Learning for Demand Estimation: High-Dimensional Causal Inference in Dynamic Panels"
 Vira Semenova, Matt Goldman, Victor Chernozhukov, Matt Taddy, 2017, https://economics.mit.edu/files/15984 
 
+"Pricing Engine: Estimating Causal Impacts in Real World Business Settings" Matt Goldman, Brian Quistorff, 2018, https://arxiv.org/abs/1806.03285 
