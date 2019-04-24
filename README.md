@@ -24,8 +24,9 @@ To replicate the results:
 ### Figure 3: Own price elasticities for categories as estimated by Orthogonal Least Squares (Double Machine Learning)
 3. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, `Figure3.R`. 
 
-The code produces the estimate and 95% confidence interval for the average price elasticity for each category in {Drinks, Dairy, NonEdible, Snacks}. A plot example is given below
+The code produces the estimate and 95% confidence interval for the average price elasticity for each category in {Drinks, Dairy, NonEdible, Snacks}. A plot example for Drinks is given below
 
+![BoxDrinksLevel1](https://user-images.githubusercontent.com/21160786/56698438-ee0b1080-66bf-11e9-99de-47732256c928.png)
 
 ### Figure 4: Own price elasticities by the months of a calendar year as estimated by  Orthogonal Least Squares (Double Machine Learning)
 
