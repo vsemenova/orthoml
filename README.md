@@ -19,17 +19,26 @@ To replicate the results:
 
 1. Download the github repo 
 2. Open Rstudio (or R) and run
-`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr", "plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")'`
+`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr","plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")'`
 
-### Figure 3: Own price elasticities as estimated by Double Machine Learning
+### Figure 3: Own price elasticities for categories as estimated by Orthogonal Least Squares (Double Machine Learning)
+3. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, `Figure3.R`. 
+
+The code produces the estimate and 95% confidence interval for the average price elasticity for each category in {Drinks, Dairy, NonEdible, Snacks}. A plot example is given below
 
 
-### Figure 4: Own price elasticities by the months of a calendar year as estimated by Orthogonal Least Squares
+### Figure 4: Own price elasticities by the months of a calendar year as estimated by  Orthogonal Least Squares (Double Machine Learning)
 
-To replicate the results, run:
+4. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, `Figure4.R`. 
 
-The estimation methods are contained in 
+The code produces the estimate and 95% confidence interval for the average price elasticity by calendar month for each category in {Dairy, NonEdible, Snacks, Sodas, Water}. A plot example is given below
 
-### Figure 5: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares
+### Figure 5: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares 
 
+4. Open /orthoml-master/src/Figure3.R and to the location of downloaded file. From the shell/or in R, `Figure5.R`. 
+
+The code produces the estimate and 95% confidence interval for the average price elasticity for categories, aggregated at Level2, Level 3, Level4. A plot example is given below
+
+
+We see that Lasso estimates are most concenrated (shrinked towards homogenous specification), Orthogonal Least Squares  is most dispersed (and least precise), and  Double Orthogonal Ridge is in the middle. 
 
