@@ -25,6 +25,7 @@ To replicate the results:
 3. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, run `Figure3.R`. 
 
 The code produces the estimate and 95% confidence interval for the average price elasticity for each category in {Drinks, Dairy, NonEdible, Snacks}. A plot example for Drinks is given below
+
 ![BoxDrinksLevel1](https://user-images.githubusercontent.com/21160786/56698512-214d9f80-66c0-11e9-9de9-347947ac58d8.png)
 
 ### Figure 4: Own price elasticities by the months of a calendar year as estimated by  Orthogonal Least Squares (Double Machine Learning)
