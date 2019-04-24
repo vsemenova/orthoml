@@ -19,7 +19,7 @@ To replicate the results:
 
 1. Download the github repo 
 2. Open Rstudio (or R) and run
-`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr","plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")'`
+`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr","plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")`
 
 ### Figure 3: Own price elasticities for categories as estimated by Orthogonal Least Squares (Double Machine Learning)
 3. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, `Figure3.R`. 
@@ -37,8 +37,15 @@ The code produces the estimate and 95% confidence interval for the average price
 
 4. Open /orthoml-master/src/Figure3.R and to the location of downloaded file. From the shell/or in R, `Figure5.R`. 
 
-The code produces the estimate and 95% confidence interval for the average price elasticity for categories, aggregated at Level2, Level 3, Level4. A plot example is given below
+The code produces a histogram of estimates for the average price elasticity for categories, aggregated at Level2, Level 3, Level4, grouped by color at Level1. A plot example is given below
 
 
 We see that Lasso estimates are most concenrated (shrinked towards homogenous specification), Orthogonal Least Squares  is most dispersed (and least precise), and  Double Orthogonal Ridge is in the middle. 
+
+# References:
+
+"Double/Debiased Machine Learning for Treatment and Causal Parameters" (Victor Chernozhukov, Denis Chetverikov, Mert Demirer, Esther Duflo, Christian Hansen, Whitney Newey, James Robins), 2017, https://arxiv.org/abs/1608.00060
+
+"Orthogonal Machine Learning for Demand Estimation: High-Dimensional Causal Inference in Dynamic Panels"
+Vira Semenova, Matt Goldman, Victor Chernozhukov, Matt Taddy, 2017, https://economics.mit.edu/files/15984 
 
