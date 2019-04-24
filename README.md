@@ -19,7 +19,7 @@ To replicate the results:
 
 1. Download the github repo 
 2. Open Rstudio (or R) and run
-`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr","plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil")`
+`install.packages(c("tictoc","cowplot","xtable","parallel","expm", "foreach", 'gamlr", "glmnet","ggplot2", "dplyr","plyr","reshape2","tidyr","iterators","assertthat","tidyverse","rmutil"))`
 
 ### Figure 3: Own price elasticities for categories as estimated by Orthogonal Least Squares (Double Machine Learning)
 3. Open /orthoml-master/src/Figure3.R and set directoryname to the location of downloaded file. From the shell/or in R, `Figure3.R`. 
