@@ -11,9 +11,8 @@ PEAggData.csv contains anonymized grocery sales data from a food distributor. Th
 
 The resulting data set takes the form:
 
-![Screenshot 2019-04-17 18 22 28](https://user-images.githubusercontent.com/21160786/56324769-d5d64700-613d-11e9-8db5-612dc62871b9.png)
+![Screenshot 2019-04-24 18 05 08](https://user-images.githubusercontent.com/21160786/56697127-e9445d80-66bb-11e9-95b6-4fb137841df2.png)
 
-where logmove stands for log weekly sales, logprice is log average week price, and the rest of the fields are self-explanatory.
 
 
 ## Code
