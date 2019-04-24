@@ -34,12 +34,15 @@ The code produces the estimate and 95% confidence interval for the average price
 
 The code produces the estimate and 95% confidence interval for the average price elasticity by calendar month for each category in {Dairy, NonEdible, Snacks, Sodas, Water}. A plot example is given below
 
+![BoxDrinksmonthSodas](https://user-images.githubusercontent.com/21160786/56698599-7f7a8280-66c0-11e9-8023-23353d600cdd.png)
+
 ### Figure 5: Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares 
 
 4. Open /orthoml-master/src/Figure3.R and to the location of downloaded file. From the shell/or in R, `Figure5.R`. 
 
 The code produces a histogram of estimates for the average price elasticity for categories, aggregated at Level2, Level 3, Level4, grouped by color at Level1. A plot example is given below
 
+![HistLevel4Dairy](https://user-images.githubusercontent.com/21160786/56698604-81dcdc80-66c0-11e9-8e4c-dab2ab27f100.png)
 
 We see that Lasso estimates are most concenrated (shrinked towards homogenous specification), Orthogonal Least Squares  is most dispersed (and least precise), and  Double Orthogonal Ridge is in the middle. 
 
