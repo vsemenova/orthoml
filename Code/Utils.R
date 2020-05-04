@@ -97,6 +97,8 @@ boxwhisker<-function(data,ci_alpha=0.05,
   
   png(paste0(figdirectory,"Box",outname,subset.name,".png"))
   print(q)
+  print(paste0("Plotting estimated elasticities and confidence bands at ",paste0(figdirectory,"Box",outname,subset.name,".png")))
+  
   dev.off()
   #return(q)
 }
@@ -120,7 +122,7 @@ hist_coef<-function(data,grouping_level,sample_size,outname,
     facet_grid(. ~ name)+
     background_grid(major = 'y', minor = "none") + # add thin horizontal lines 
     panel_border()+
-    xlab(paste( "Number of het. groups= ",dim(data)[1], "Total Sample Size= ",sample_size, "Ridge penalty ",as.character(lambda_ridge),collapse="."))+
+    xlab(paste( "Number of het. groups= ",dim(data)[1], "Total Sample Size= ",sample_size,collapse="."))+
     ylab("Count")+
     scale_fill_manual(values =legend_values,
                       labels = legend_breaks, drop = FALSE)+
@@ -136,6 +138,8 @@ hist_coef<-function(data,grouping_level,sample_size,outname,
   
   
   print(m)
+  print(paste0("Plotting estimated elasticities and confidence bands at ",paste0(figdirectory,"Hist",outname,".png")))
+  
   ggsave(paste0(figdirectory,"Hist",outname,".png"),width=20,height=10,device="png")
   dev.off()
   

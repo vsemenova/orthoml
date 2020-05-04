@@ -13,7 +13,7 @@ method.treat <<- cv.gamlr
 # Method to estimate first stage sales regression is  gamlr (Taddy, 2011) with penalty parameter chosen by cross-validation
 method.outcome <<- cv.gamlr
 # Second stage method for price elasticities is ordinary least squares
-second_stage_method_names<<-c("OLS","Lasso","Ridge")
+second_stage_method_names<<-c("OLS","Lasso","DebiasedLasso")
 # Figure 3: average category-level elasticities at Level2/Level1 (for Drinks) and Level 1 (for rest of
 # categories)
 

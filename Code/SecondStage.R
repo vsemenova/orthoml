@@ -27,7 +27,7 @@ second_stage<-function(my_data,fs,
     method<-get(method_name)
     # execute estimator 
     result<-method(x=het_treat,y=outcome_res,htheta = res[["Lasso"]]$est,...)
-    if (method_name %in% c("OLS","Ridge")) {
+    if (method_name %in% c("OLS","DebiasedLasso")) {
       # add variance estimator for OLS and Ridge
       res[[method_name]]<-data.frame(est =as.numeric(hard_coded_unique_categories%*%result$estimator),
                                      st.error.hat =as.numeric(sqrt(diag(hard_coded_unique_categories%*%result$vcov%*%t(hard_coded_unique_categories))))) 
@@ -90,8 +90,8 @@ Lasso<-function(x,y,categoryname,...){
   return(list(estimator=htheta))
 }
 
-### Double Orthogonal Ridge
-Ridge<-function(x,y,lambda_ridge,htheta,...){
+### Double Orthogonal Lasso
+DebiasedLasso<-function(x,y,lambda_ridge,htheta,...){
   p<-dim(x)[2]
   ## ridge regularized inverse
   M<-solve (t(x)%*% x +lambda_ridge*diag(p)) 

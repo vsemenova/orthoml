@@ -1,14 +1,15 @@
-## This code replicates Figure 3 from the paper "Orthogonal Machine Learning for Demand Estimation:
-# High-Dimensional Causal Inference in Dynamic Panels"
+## This code replicates  from the paper "Estimation and Inference about Heterogeneous Treatment Effects in High-Dimensional Dynamic Panels"
+## Figure is saved in paste0(directoryname,"/Output/Figures/")
 
-# Figure 3: average category-level elasticities at Level2/Level1 (for Drinks) and Level 1 (for rest of
+
+# Average category-level elasticities at Level2/Level1 (for Drinks) and Level 1 (for rest of
 # categories)
 
 rm(list=ls())
 # set directoryname
-directoryname<-"~/orthoml/src"
+directoryname<-"/n/tata/orthoml/"
 setwd(directoryname)
-source(paste0(directoryname,"/Code/Source.R"))
+source(paste0(directoryname,"/Code/Libraries.R"))
 figdirectory<-paste0(directoryname,"/Output/Figures/")
 # Average Category Elasticity
 # Method to estimate first stage price regression is  gamlr (Taddy, 2011) with penalty parameter chosen by cross-validation
@@ -18,6 +19,11 @@ method.outcome <<- cv.gamlr
 # Second stage method for price elasticities is ordinary least squares
 second_stage_method_names<<-c("OLS")
 
+## 
+source(paste0(directoryname,"/Code/Utils.R"))
+source(paste0(directoryname,"/Code/FirstStage.R"))
+source(paste0(directoryname,"/Code/SecondStage.R"))
+source(paste0(directoryname,"/Code/Main.R"))
 ## Arguments
 #@ categoryname:  string: name of the category of products to conduct analysis
 #@ het.name    :  string:  name of categorical feature whose price elasticities are of interest

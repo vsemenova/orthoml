@@ -29,8 +29,10 @@ main<-function(categoryname,het.name,
     my_data1<-read.csv(paste0(directoryname,"/Data/AggDataDairyPart1.csv"))
     my_data2<-read.csv(paste0(directoryname,"/Data/AggDataDairyPart2.csv"))
     my_data<-rbind(my_data1,my_data2)
+
   } else {
     my_data<-read.csv(paste0(directoryname,"/Data/AggData",categoryname,".csv"))
+    print(paste0("Reading in data from ",paste0(directoryname,"/Data/AggData",categoryname,".csv")))
   }
  
   colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
@@ -39,6 +41,7 @@ main<-function(categoryname,het.name,
   my_data$logpr<-my_data$logprice-my_data$logprice_lag
   ## if replicate the first stage
 if (run_fs) {
+  print ("Estimating price and sales first-stage regressions")
   ##### FIRST STAGE #############
   fs<-first_stage(my_data=my_data,treat.name = "logpr",
                   outcome.name ="logsales",
@@ -50,7 +53,7 @@ if (run_fs) {
 } else {
   # otherwise, load residuals
   fs<-read.csv(paste0(directoryname,"/Output/FirstStage",categoryname,".csv"))
- 
+  print (paste0("Reading estimated first-stage residuals from ",paste0(directoryname,"/Output/FirstStage",categoryname,".csv")))
 } # make sure there are no NAs in the residuals
   if (sum(is.na(fs$treat) + is.na(fs$outcome))>0) {
     stop("NAs in the first stage. Check computation of the residuals")
@@ -97,13 +100,14 @@ if (run_fs) {
       }
     
     }
-    boxwhisker(data=ss$OLS,subset.name=subset.name,het.name=het.name,...)
+     boxwhisker(data=ss$OLS,subset.name=subset.name,het.name=het.name,...)
+    
   } else {
     # This branch holds for Figure 5
    
     ## need to collapse the list with 3 estimators into (no standard errors) into a dataframe
     ss_estimates<-left_join(data.frame( Lasso=ss$Lasso$est,
-                             Ridge=ss$Ridge$est,
+                             DebiasedLasso=ss$DebiasedLasso$est,
                              OLS = ss$OLS$est,
                              RowID=ss$OLS$RowID), select(my_data,one_of("RowID",grouping_level)),
                             by = c("RowID"="RowID")) %>%
