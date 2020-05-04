@@ -122,8 +122,9 @@ hist_coef<-function(data,grouping_level,sample_size,outname,
     facet_grid(. ~ name)+
     background_grid(major = 'y', minor = "none") + # add thin horizontal lines 
     panel_border()+
-    xlab(paste( "Number of het. groups= ",dim(data)[1], "Total Sample Size= ",sample_size,collapse="."))+
+    xlab("")+
     ylab("Count")+
+    xlim(-55,55)+
     scale_fill_manual(values =legend_values,
                       labels = legend_breaks, drop = FALSE)+
     scale_color_manual(values =legend_values,
