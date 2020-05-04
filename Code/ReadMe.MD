@@ -1,3 +1,4 @@
+### Introduction
 
 This folder contains replication code for "Estimation and Inference about Heterogeneous Treatment Effects
 in High-Dimensional Dynamic Panels" by Vira Semenova, Matt Goldman, Victor Chernozhukov, Matt Taddy.
@@ -15,7 +16,7 @@ by month",
 
 ### Helper functions:
 Utils.R
-### check whether you have installed required packages
+### Check whether you have installed required packages
 Libraries.R
 
 ### To access estimated elasticities/change settings in the method, see
