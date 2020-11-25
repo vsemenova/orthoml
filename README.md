@@ -9,6 +9,7 @@ AggData*.csv for * in {Drinks, DairyPart1, DairyPart2, NonEdible, Snacks} contai
 To preserve the distributor's anonymity, we replaced the names of the nodes at Level 2 and below by numbers (for Drinks Level 3 and below) by numbers. We also added lags of sales and prices.  The resulting data set takes the form:
 
 ![Screenshot 2019-04-24 18 05 08](https://user-images.githubusercontent.com/21160786/56697127-e9445d80-66bb-11e9-95b6-4fb137841df2.png)
+<img width="548" alt="Screen Shot 2020-11-23 at 4 15 28 PM" src="https://user-images.githubusercontent.com/21160786/100168073-8d8d1800-2e8e-11eb-9d76-eb538cf23905.png">
 
 
 
