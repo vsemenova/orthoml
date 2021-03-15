@@ -32,11 +32,11 @@ for (categoryname in categorynames) {
   #subset_inds<-inds_test<-setdiff( (1:dim(my_data)[1]),inds_train)
   subset_inds<-inds_test<-(1:dim(my_data)[1])
   # load first stage residuals
-  fs<-read.csv(paste0(directoryname,"/processed_data/first_stage_levels/FirstStage",categoryname,".csv"))
-  print (paste0("Reading estimated first-stage residuals from ",paste0(directoryname,"/processed_data/first_stage_levels/",categoryname,".csv")))
+  fs<-read.csv(paste0(directoryname,"/processed_data/first_stage_fd/FirstStage",categoryname,".csv"))
+  print (paste0("Reading estimated first-stage residuals from ",paste0(directoryname,"/processed_data/first_stage_fd/",categoryname,".csv")))
   
   
-
+  
   ## estimate elasticities and standard errors
   if (categoryname == "Drinks") {
     het.name="Level2_Name"
@@ -52,11 +52,11 @@ for (categoryname in categorynames) {
     ss$OLS$st.error.hat<-sapply( ss$OLS$st.error.hat,round,3)
     
     ## save the result
-    figdirectory<-paste0(directoryname,"/Figures/Figure1/")
+    figdirectory<-paste0(directoryname,"/Figures/Figure1_fd/")
     ## as figure
     boxwhisker(data=ss$OLS,het.name=het.name,outname=paste0(categoryname,"Level1"), figdirectory= figdirectory)
     ## as table
-    write.csv(ss$OLS,paste0(directoryname,"/Tables/","/Figure1/",categoryname,"Level1"))
+    write.csv(ss$OLS,paste0(directoryname,"/Tables/","/Figure1_fd/",categoryname,"Level1"))
   } else {
     het.name="Level1_Name"
     ss<-second_stage(my_data=cbind(fs,my_data)[subset_inds,],categoryname=categoryname,het.name="Level1_Name",
@@ -70,25 +70,13 @@ for (categoryname in categorynames) {
     ss$OLS$st.error.hat<-sapply( ss$OLS$st.error.hat,round,3)
     
     
-    figdirectory<-paste0(directoryname,"/Figures/Figure1/")
+    figdirectory<-paste0(directoryname,"/Figures/Figure1_fd/")
     boxwhisker(data=ss$OLS,het.name=het.name,outname=paste0(categoryname,"Level1"),figdirectory=figdirectory)
-    write.csv(ss$OLS,paste0(directoryname,"/Tables/","/Figure1/",categoryname,"Level1"))
+    write.csv(ss$OLS,paste0(directoryname,"/Tables/","/Figure1_fd/",categoryname,"Level1"))
     
-   
-      het.name="month_name"
-      ss<-second_stage(my_data=cbind(fs,my_data)[subset_inds,],categoryname=categoryname,het.name="month_name",
-                       second_stage_method_names=c("OLS"))
-      ss$OLS<-left_join(ss$OLS,select(my_data,one_of("RowID",het.name,"month")),by=c("RowID"="RowID")) 
-      colnames(ss$OLS)[ colnames(ss$OLS)==het.name]<-"xbreaks"
-      ss$OLS<-ss$OLS[order(ss$OLS$month),]
-      ss$OLS$est<-sapply( ss$OLS$est,round,3)
-      ss$OLS$st.error.hat<-sapply( ss$OLS$st.error.hat,round,3)
-      
-      figdirectory<-paste0(directoryname,"/Figures/Figure2/")
-      boxwhisker(data=ss$OLS,het.name=het.name,outname=paste0(categoryname,"month"),figdirectory=figdirectory)
-      write.csv(ss$OLS,paste0(directoryname,"/Tables/","/Figure2/",categoryname,"month"))
+  
     
-   
+    
   }
   
   

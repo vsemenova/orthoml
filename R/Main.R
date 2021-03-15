@@ -12,7 +12,7 @@
 
 main<-function(categoryname,
                grouping_level=NULL,
-               outname,...) {
+               outname,all_levels,...) {
   
 
   
@@ -35,6 +35,18 @@ main<-function(categoryname,
               categoryname= categoryname,outname=outname,...
     )
     #ss_estimates<-apply(ss_estimates,2,round,3)
-    
+  
+    ss_estimates<-left_join(data.frame( Lasso=sapply(ss$Lasso$est,round,3),
+                                        DebiasedLasso=sapply(ss$DebiasedLasso$est,round,3),
+                                        OLS = sapply(ss$OLS$est,round,3),
+                                        RowID=ss$OLS$RowID), select(my_data,one_of("RowID",grouping_level,all_levels)),
+                            by = c("RowID"="RowID")) %>%
+      select(.,-RowID)
+   n_unique_Lasso<-length(unique(ss_estimates$Lasso))
+   n_unique_DebiasedLasso<-length(unique(ss_estimates$DebiasedLasso))
+   n_unique_OLS<-length(unique(ss_estimates$OLS))
+   n_unique_RowID<-length(unique(ss$OLS$RowID))
+   
+   ss_estimates<-rbind(ss_estimates,c(n_unique_Lasso,n_unique_DebiasedLasso,n_unique_OLS,n_unique_RowID,rep(0,dim( ss_estimates)[2]-4)  ))
    write.csv(ss_estimates,paste0(tabledirectory,outname))
 }

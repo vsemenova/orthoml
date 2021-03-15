@@ -8,6 +8,7 @@ library(xtable)
 library(grid)
 library(gridExtra)
 library(cowplot)
+library(reshape)
 #source(paste0(directoryname,"/R/Libraries.R"))
 figdirectory<-paste0(directoryname,"/Figures/")
 # Average Category Elasticity
@@ -20,7 +21,7 @@ source(paste0(directoryname,"/R/ss_methods.R"))
 source(paste0(directoryname,"/R/Main.R"))
 
 second_stage_method_names<<-c("OLS","Lasso","DebiasedLasso")
-categorynames = c("Dairy","NonEdible","Snacks")
+categorynames = c("Dairy","Snacks")
 run_fs=FALSE
 xlims<-list()
 xlims[["Dairy"]]<-c(-10,10)
@@ -30,7 +31,7 @@ grouping_level<-"Level1_Name"
 figdirectory=paste0(directoryname,"/Figures/Figure3/")
 tabledirectory=paste0(directoryname,"/Tables/Figure3/")
 
-for (categoryname in c("Dairy","NonEdible","Snacks")) {
+for (categoryname in c("Dairy","Snacks")) {
   ## load data
   my_data<-read.csv(paste0(directoryname,"/processed_data/",categoryname,".csv"))
   my_data$Level1<-as.factor(as.character(my_data$Level1))
@@ -40,11 +41,11 @@ for (categoryname in c("Dairy","NonEdible","Snacks")) {
   colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
   my_data$RowID<-as.character(my_data$RowID)
    
-  inds_train<-(1:dim(my_data)[1])[(my_data$year==2013 & my_data$week<=8) + (my_data$year==2012)>=1]
-  subset_inds<-inds_test<-setdiff( (1:dim(my_data)[1]),inds_train)
-  
+  #inds_train<-(1:dim(my_data)[1])[(my_data$year==2013 & my_data$week<=8) + (my_data$year==2012)>=1]
+ # subset_inds<-inds_test<-setdiff( (1:dim(my_data)[1]),inds_train)
+  subset_inds<-inds_test<-(1:dim(my_data)[1])
   ## load first stage estimates
-  fs<-read.csv(paste0(directoryname,"/processed_data/first_stage/FirstStage",categoryname,".csv"))
+  fs<-read.csv(paste0(directoryname,"/processed_data/first_stage_levels/FirstStage",categoryname,".csv"))
   print (paste0("Reading estimated first-stage residuals from ",paste0(directoryname,"/processed_data/first_stage/",categoryname,".csv")))
   
   
@@ -55,8 +56,9 @@ for (categoryname in c("Dairy","NonEdible","Snacks")) {
   main(my_data=cbind(fs,my_data),
        categoryname=categoryname,het.name=het.name, 
        grouping_level=grouping_level,second_stage_method_names=second_stage_method_names,
-       lambda_ridge=0.01,
-       outname=paste0( "Level2",categoryname),xlims=xlims,figdirectory=figdirectory)
+       lambda_ridge=log(length(subset_inds))/length(subset_inds),
+       outname=paste0( "Level2",categoryname),xlims=xlims,figdirectory=figdirectory,all_levels=c("Level1_Name",
+                                                                                                 "Level2_Name"))
   
 
   het.name<-c("Level1","Level2","Level3")
@@ -64,7 +66,9 @@ for (categoryname in c("Dairy","NonEdible","Snacks")) {
        categoryname=categoryname,het.name=het.name, 
        grouping_level=grouping_level,second_stage_method_names=second_stage_method_names,
        lambda_ridge=0.3,
-       outname=paste0( "Level3",categoryname),figdirectory=figdirectory)
+       outname=paste0( "Level3",categoryname),figdirectory=figdirectory,all_levels=c("Level1_Name",
+                                                                                     "Level2_Name",
+                                                                                     "Level3_Name"))
   
   # Average Category Elasticity at Level 4
   ## Snacks has no Level4 categories
@@ -74,7 +78,10 @@ for (categoryname in c("Dairy","NonEdible","Snacks")) {
          categoryname=categoryname,het.name=het.name, 
          grouping_level=grouping_level,second_stage_method_names=second_stage_method_names,
          lambda_ridge=0.9,
-         outname=paste0( "Level4",categoryname),figdirectory=figdirectory)
+         outname=paste0( "Level4",categoryname),figdirectory=figdirectory,all_levels=c("Level1_Name",
+                                                                                       "Level2_Name",
+                                                                                       "Level3_Name",
+                                                                                       "Level4_Name"))
   }
  
   

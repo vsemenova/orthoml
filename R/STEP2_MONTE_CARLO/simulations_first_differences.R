@@ -7,12 +7,12 @@ library(glmnet)
 library(hdm)
 
 directoryname<-"/n/tata/orthoml/"
-source(paste0(directoryname,"/R/utils_for_simulations.R"))
+source(paste0(directoryname,"/R/utils_sims.R"))
 source(paste0(directoryname,"/R/ss_methods.R"))
 source(paste0(directoryname,"/R/auxiliary.R"))
 #### READ IN DATA and ESTIMATE FIRST STAGE PARAMTERS ##
 
-my_data<-read.csv(paste0(directoryname,"/processed_data/Protein.csv"))
+my_data<-read.csv(paste0(directoryname,"/processed_data/Dairy.csv"))
 colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
 my_data$RowID<-as.character(my_data$RowID)
 TT= dim(unique(my_data[,c("week","year")]))[1]
