@@ -46,7 +46,7 @@ sales.fit<-rlasso(logsales~., mydf[,c("logsales","SiteName","ChannelName","Item"
 second_stage_method_names=c("Lasso","DebiasedLasso","OLS","Oracle")
 num_estimates<-length(second_stage_method_names)
 sample_sizes<-c(100,200,300,500,1000,2000)
-N_rep=100
+N_rep=1000
 ci_alpha=0.05
 myres_M1<-array(0,c(num_estimates,N_rep,length(sample_sizes)))
 average<-array(0,c(num_estimates,length(sample_sizes)))
@@ -166,4 +166,4 @@ print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2]))),digits = 2),a
 
 write.table(
   print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2])))),add.to.row=addtorow, include.colnames=F,
-        include.rownames=T),paste0(directoryname,"/Tables/sims_level_fixed_effect_diff.txt"))
+        include.rownames=T),paste0(directoryname,"/Tables/sims_fixed_effect_diff.txt"))
