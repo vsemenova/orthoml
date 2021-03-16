@@ -121,7 +121,7 @@ for (j in 1:7) {
     inds_train<-sample_inds[1:sample_size]
     inds_test<-sample_inds[(1+sample_size):(2*sample_size)]
     
-    if (TRUE) {
+
       estimated_fs<-first_stage_1df(treat=simulated_data[,"logprice_1df"],
                                     outcome=simulated_data[,"logsales_1df"],
                                     mydata=simulated_data,
@@ -129,12 +129,8 @@ for (j in 1:7) {
                                     first_stage_sales_formula = simulated_first_stage_sales_formula,
                                     inds_train =  inds_train
       )
-    }
-    if (FALSE) {
-      estimated_fs<-list(treat=simulated_data$P.tilde_first_diff,
-                         outcome = simulated_data$P.tilde_first_diff*simulated_data$het_beta0  +simulated_data$U_first_diff  )
-    }
     
+   
     
     
     myres<-second_stage(my_data=simulated_data[inds_test,],
