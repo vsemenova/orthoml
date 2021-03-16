@@ -96,12 +96,12 @@ generate_price_sales<-function(seed,N,TT,mydf,fs,het_beta0,price_fixed_effect=0,
     ## logpr = logprice - logprice_lag
     logpr[,t]<-predict(fs$treat.fit,mydf)+ P.tilde_first_diff[,t]
     ## generate logprice from logprice_lag and its first difference
-    logprice[,t]<-logpr[,t]+logprice[,t-1]+P.tilde[,t-1]
+    logprice[,t]<-logpr[,t]+logprice[,t-1]+price_fixed_effect
     
     ## logsls = logsales - logprice_lag
     logsls[,t]<-predict(fs$outcome.fit,mydf)+(het_beta0)*P.tilde_first_diff[,t] + U_first_diff[,t]
     ## generate logprice from logprice_lag and its first difference
-    logsales[,t]<-logsls[,t]+logsales[,t-1]+U[,t-1]
+    logsales[,t]<-logsls[,t]+logsales[,t-1]+sales_fixed_effect
     
 
     week[,t]<-t

@@ -158,4 +158,7 @@ for (k in 1:4) {
   my_data_subset$month_name<-month.abb[my_data_subset$month]
   my_data_subset$Level2_Name
   write.csv(my_data_subset,paste0(directoryname,"/processed_data/",categoryname,".csv"))
+  
+  write.csv(my_data_subset[1:222691,],paste0(directoryname,"/processed_data/",categoryname,"1.csv"))
+  write.csv(my_data_subset[222692:445382,],paste0(directoryname,"/processed_data/",categoryname,"2.csv"))
 }

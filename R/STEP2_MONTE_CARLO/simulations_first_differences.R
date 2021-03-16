@@ -20,16 +20,23 @@ N=floor(dim(my_data)[1]/TT)
 selected_inds<-sample(1:dim(my_data)[1],N,replace=FALSE)
 inds_train<-(1:dim(my_data)[1])[(my_data$year==2013 & my_data$week<=8) + (my_data$year==2012)>=1]
 inds_test<-setdiff( (1:dim(my_data)[1]),inds_train)
+my_data$logprice_lag_fd<-my_data$logprice_lag - my_data$logprice_lag_2
+my_data$logsales_lag_fd<-my_data$logsales_lag - my_data$logsales_lag_2
+
+my_data$logprice_lag_fd_2<-my_data$logprice_lag_2 - my_data$logprice_lag_3
+my_data$logsales_lag_fd_2<-my_data$logsales_lag_2 - my_data$logsales_lag_3
 cal_data<-calibrate_data(my_data,selected_inds)
 mydf<-cal_data$mydf
 my_data<-cal_data$mydata
 
-simulated_first_stage_price_formula<-as.formula(paste0("logprice_1df~logprice_lag+logprice_lag_2+(",paste(c("Level1"),collapse="+"),"):(",
-                                                       paste(c("logprice_lag","logprice_lag_2"),collapse="+"),
+simulated_first_stage_price_formula<-as.formula(paste0("logprice_1df~",paste(c("Level1"),collapse="+"),"*(",
+                                                       paste(c("logprice_lag_fd","logprice_lag_fd_2"),collapse="+"),
                                                        ")"))
-simulated_first_stage_sales_formula<-as.formula(paste0("logsales_1df~logprice_lag+logprice_lag_2+logsales_lag+logsales_lag_2+(",paste(c("Level1"),collapse="+"),"):(",
-                                                       paste(c("logprice_lag","logprice_lag_2","logsales_lag","logsales_lag_2"),collapse="+"),
+simulated_first_stage_sales_formula<-as.formula(paste0("logsales_1df~",paste(c("Level1"),collapse="+"),"*(",
+                                                       paste(c("logprice_lag_fd","logprice_lag_fd_2","logsales_lag_fd","logsales_lag_fd_2"),collapse="+"),
                                                        ")"))
+
+
 fs<-first_stage_1df(treat=my_data[,"logprice_1df"],
                     outcome=my_data[,"logsales_1df"],
                     mydata=my_data,
@@ -45,7 +52,7 @@ sales.fit<-rlasso(logsales~., mydf[,c("logsales","SiteName","ChannelName","Item"
 
 second_stage_method_names=c("Lasso","DebiasedLasso","OLS","Oracle")
 num_estimates<-length(second_stage_method_names)
-sample_sizes<-c(100,200,300,500,1000,2000)
+sample_sizes<-c(90,100,200,300,500,1000,2000)
 N_rep=1000
 ci_alpha=0.05
 myres_M1<-array(0,c(num_estimates,N_rep,length(sample_sizes)))
@@ -59,7 +66,7 @@ rej.freq<-array(0,c(num_estimates,length(sample_sizes)))
 
 N=1705
 TT=270
-p=50
+p=80
 rho<-0.9
 sigma.p=0.01
 sigma.u=0.03
@@ -73,8 +80,11 @@ controls<-std_controls%*%chol(cov_matrix)
 colnames(controls)<-paste0("control",c(1:p))
 price_coef<-0.05/(1:p)^(2)
 sales_coef<-0.05/(1:p)^(2)
-simulated_price_fixed_effect<-predict(price.fit,mydf[,c("logprice","SiteName","ChannelName")])+controls%*%price_coef
-simulated_sales_fixed_effect<-predict(sales.fit,mydf[,c("logsales","SiteName","ChannelName","Item","Level1",  "Level2" , "Level3" , "Level4",  "Level5")])+controls%*%sales_coef
+set.seed(1)
+price_unit_effect<-0.05*rnorm(N)
+sales_unit_effect<-0.05*rnorm(N)
+simulated_price_fixed_effect<-predict(price.fit,mydf[,c("logprice","SiteName","ChannelName")])+price_unit_effect
+simulated_sales_fixed_effect<-predict(sales.fit,mydf[,c("logsales","SiteName","ChannelName","Item","Level1",  "Level2" , "Level3" , "Level4",  "Level5")])+sales_unit_effect
 
 
 true_epsilon.own<-epsilon.own<-3*c(-1,-0.5,-0.25,-0.125,0.5^(5:dim(controls)[2]) )
@@ -88,13 +98,21 @@ simulated_data<-generate_price_sales(seed=1,N=N,TT=TT,mydf=mydf,
                                      sales_fixed_effect=simulated_sales_fixed_effect,
                                      price_fixed_effect=simulated_price_fixed_effect)
 
-simulated_data<-simulated_data[simulated_data$week>=5,]
-num_coords<-c(4,4,8,8,10,10)
+
+simulated_data$logprice_lag_fd<-simulated_data$logprice_lag - simulated_data$logprice_lag_2
+simulated_data$logsales_lag_fd<-simulated_data$logsales_lag - simulated_data$logsales_lag_2
+
+simulated_data$logprice_lag_fd_2<-simulated_data$logprice_lag_2 - simulated_data$logprice_lag_3
+simulated_data$logsales_lag_fd_2<-simulated_data$logsales_lag_2 - simulated_data$logsales_lag_3
+
+
+simulated_data<-simulated_data[simulated_data$week>=7,]
+num_coords<-c(4,4,8,8,10,10,10)
 lambda_array<-log(sample_sizes)*log(p)/sample_sizes
 #lambda_array[5]<-0.0005
 #lambda_array[6]<-0.0005
 
-for (j in 1:6) {
+for (j in 1:7) {
   for(seed in 1:N_rep)  {
     print(j)
     set.seed(seed)
@@ -117,16 +135,16 @@ for (j in 1:6) {
                          outcome = simulated_data$P.tilde_first_diff*simulated_data$het_beta0  +simulated_data$U_first_diff  )
     }
     
-
+    
     
     myres<-second_stage(my_data=simulated_data[inds_test,],
-                         fs=list(treat=estimated_fs$treat[inds_test],
-                                 outcome=estimated_fs$outcome[inds_test]),
-                         controls=controls_tt[inds_test,],
-                         second_stage_method_names = c("True",second_stage_method_names),
-                         lambda_ridge=lambda_array[j],true_parameter=true_epsilon.own,
-                         target_controls = controls,
-                         nonzero_coords=1:num_coords[j])
+                        fs=list(treat=estimated_fs$treat[inds_test],
+                                outcome=estimated_fs$outcome[inds_test]),
+                        controls=controls_tt[inds_test,],
+                        second_stage_method_names = c("True",second_stage_method_names),
+                        lambda_ridge=lambda_array[j],true_parameter=true_epsilon.own,
+                        target_controls = controls,
+                        nonzero_coords=1:num_coords[j])
     
     
     true_partial_effect<-myres$partial_effects$True
@@ -151,7 +169,7 @@ for (j in 1:6) {
 
 
 result<-cbind(t(bias),t(rmse),1-t(rej.freq))
-rownames(result)<-c("$100$","$200$","$300$","$500$","$1000$","$2000$")
+rownames(result)<-c("$90$","$100$","$200$","$300$","$500$","$1000$","$2000$")
 colnames(result)<-rep(second_stage_method_names,3)
 result<-apply(result,2,round,3)
 
@@ -166,4 +184,4 @@ print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2]))),digits = 2),a
 
 write.table(
   print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2])))),add.to.row=addtorow, include.colnames=F,
-        include.rownames=T),paste0(directoryname,"/Tables/sims_fixed_effect_diff.txt"))
+        include.rownames=T),paste0(directoryname,"/Tables/sims_fixed_effect.txt"))
