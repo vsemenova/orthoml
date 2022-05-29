@@ -1,0 +1,24 @@
+"x"
+"1" "% latex table generated in R 3.5.1 by xtable 1.8-4 package
+% Sun May 29 22:55:49 2022
+\begin{table}[ht]
+\centering
+\begin{tabular}{lr}
+  \hline
+name & est \\ 
+  \hline
+L1logprice & 0.000 \\ 
+  Dairy.L1logprice & 0.000 \\ 
+  Fish.L1logprice & 0.000 \\ 
+  Meat.L1logprice & 0.000 \\ 
+   \hline
+\end{tabular}
+\end{table}
+"
+"x"
+"1" "~"
+"2" "(Item + month + SiteName + ChannelName) + (Level1_Name + Level2_Name + Level3_Name) + Level1_Name * (L1logprice)"
+"x"
+"1" "lambda_price=0.139"
+"x"
+"1" "sample_size=460384"
