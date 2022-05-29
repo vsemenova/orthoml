@@ -35,12 +35,9 @@ white_cov<-function(x,y,b,M,...) {
   return(VAR)
 }
 ### Orthogonal Lasso ###
+
 Lasso<-function(x,y,categoryname,...){
-  # default choice is the top level of the hierarchy
-  #names_free_from_penalty<-c("(Intercept)",grep("Level1",colnames(x),value=TRUE))
-  #names_free_from_penalty<-c("(Intercept)")
-  #fit<-cv.gamlr(x,y,  standardize=FALSE,      intercept=TRUE,     lmr=1e-7,     free = names_free_from_penalty)
-  fit<-cv.gamlr(x,y,  standardize=TRUE,      intercept=TRUE,     lmr=1e-7)
+    fit<-cv.gamlr(x,y,  standardize=TRUE,      intercept=TRUE,     lmr=1e-7)
   htheta<-coef(fit,s="min")[-1]
   names(htheta)<-colnames(x)
   return(list(estimator=htheta))
@@ -55,8 +52,14 @@ DebiasedLasso<-function(x,y,lambda_ridge,htheta,...){
   
   b.hat<-M%*% t(x)%*%( y - x%*%htheta) + htheta
   ## White-type standard error
-  vcov<-white_cov(x=x,y=y,b=b.hat,M=M)
+  vcov<-white_cov(x=x,y=y,b=htheta,M=M)
   #vcov=matrix(0,length(as.numeric(b.hat)),length(as.numeric(b.hat)))
   return(list(estimator = b.hat,
               vcov=vcov ))
+}
+GLasso<-function(x,y,...) {
+  fit<-grplasso(x,y,index=c(1:dim(x)[2],1:dim(x)[2]),  standardize=TRUE,      intercept=TRUE)
+  htheta<-coef(fit,s="min")[-1]
+  names(htheta)<-colnames(x)
+  return(list(estimator=htheta))
 }

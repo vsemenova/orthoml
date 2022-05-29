@@ -1,7 +1,7 @@
 ### This file makes the first pass of on the aggregated data PEAggData.csv
 
 ### It adds 4 lags of logprice/logsales 
-##     helper lag functions are in auxiliary.R
+##     helper lag functions are in Utils.R
 ###    sets the correct type of key variables
 ###    splits data into 4 subsets by category (Drinks/Protein/Non_Edibles/Snacks) and saves into 4 distinct files
 
@@ -133,7 +133,7 @@ level1_inds_list[[4]]<-c(27,6,28,25)
 category_list[[4]]<-"Snacks"
 
 
-for (k in 3:4) {
+for (k in 1:4) {
   ## take level 1 inds corresponding to a category
   level1_inds<<-level1_inds_list[[k]]
   categoryname<-category_list[[k]]

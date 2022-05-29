@@ -98,7 +98,7 @@ boxwhisker<-function(data,ci_alpha=0.05,
 # Histogram of estimated elasticities at Level determined by bottomlevel
 # Grouped by color determined by Level1
 hist_coef<-function(data,grouping_level,sample_size,outname,figdirectory,
-                    xtext=NULL,maxy=10,eps=0.5,minx=15,lambda_ridge=0.9,...) {
+                    xtext=NULL,maxy=10,eps=0.5,minx=15,lambda_ridge=0.9,xlimh,...) {
 
   legend_breaks<-unique(data[,grouping_level])
  legend_values<-c("red","blue","green","yellow","pink",
@@ -116,7 +116,8 @@ hist_coef<-function(data,grouping_level,sample_size,outname,figdirectory,
     panel_border()+
     xlab("")+
     ylab("Count")+
-    xlim(-10,10)+
+    xlim(xlimh[1],xlimh[2])+
+    geom_vline(xintercept=0)+
     scale_fill_manual(values =legend_values,
                       labels = legend_breaks, drop = FALSE)+
     scale_color_manual(values =legend_values,
@@ -136,5 +137,18 @@ hist_coef<-function(data,grouping_level,sample_size,outname,figdirectory,
   ggsave(paste0(figdirectory,"Hist",outname,".png"),width=20,height=10,device="png")
   #dev.off()
   
+}
+make.name<-function(x) {
+  if (!is.na(strsplit(x,"Level1_Name")[[1]][2])) {
+    x<-strsplit(x,"Level1_Name")[[1]][2]
+  }
+  if (!is.na(strsplit(x,"Level2_Name")[[1]][2])) {
+    x<-strsplit(x,"Level2_Name")[[1]][2]
+  }
+  if (!is.na(strsplit(x,"Level3_Name")[[1]][2])) {
+    x<-strsplit(x,"Level3_Name")[[1]][2]
+  }
+  x<-make.names(x)
+  return(x)
 }
 

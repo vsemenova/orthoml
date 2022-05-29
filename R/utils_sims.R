@@ -1,262 +1,193 @@
-generate_residuals<-function(seed,N,TT,sigma.p=0.02, sigma.u=0.01,...) {
+generate_second_stage<-function(seed,N,epsilon.own,TT=1,sigma.p=0.1, sigma.u=0.03,rho=0.9,...) {
+  
+  ## generate residuals
+  set.seed(seed)
+  P.tilde<-matrix(sigma.p*rnorm(N*TT),ncol=1)
+  U<-matrix(sigma.u*rnorm(N*TT),ncol=1)
+  
+  p_het = length(epsilon.own)
   
   set.seed(seed)
-  P.tilde<-matrix(sigma.p*rnorm(N*TT),ncol=TT)
-  U<-matrix(sigma.u*rnorm(N*TT),ncol=TT)
- # Q.tilde<-P.tilde*matrix(rep(het_characteristics%*%epsilon.own, TT),ncol=TT)+U
+  std_controls<-matrix(rnorm(N*TT*(p_het-1)),ncol=p_het-1)
+  #std_controls<-matrix(rnorm(N*(p_het-1)),ncol=p_het-1)
+  cov_matrix<-toeplitz(rho^(c(0:(p_het-2))))
+  het_controls<-std_controls%*%chol(cov_matrix)
+  het_controls<-cbind(rep(1,N*TT),het_controls)
   
-  P.tilde_first_diff=matrix(P.tilde,ncol=TT)
-  U_first_diff=matrix(U,ncol=TT)
   
-  for (t in 2:TT) {
-    ### logprice first difference 
-    
-    P.tilde_first_diff[,t]<-P.tilde[,t]-P.tilde[,t-1]
-    U_first_diff[,t]<-U[,t]-U[,t-1]
-  }
+  
+  ### generate outcome residual
+  Q.tilde<-P.tilde*(het_controls%*%epsilon.own)+U
   
   return(data.frame(
+    het_controls=het_controls,
     P.tilde=as.numeric(P.tilde),
     U=as.numeric(U),
-    P.tilde_first_diff=as.numeric(P.tilde_first_diff),
-    U_first_diff=as.numeric(U_first_diff)
-    ))
-}
-
-calibrate_data<-function(mydata,selected_inds) {
-  
-  
-  
-  #### first difference transform
-  mydata$logprice_1df<-mydata$logprice-mydata$logprice_lag
-  mydata$logsales_1df<-mydata$logsales-mydata$logsales_lag
-  
-
-
-  
-  mydf<-mydata[selected_inds,]
-  #### simulate columns in mydata: Level1, Level2, Level3, Level4
-  mydf$Level1<-sample(unique(mydf$Level1),length(mydf$Level1),replace=TRUE)
-  mydf$Level2<-sample(unique(mydf$Level2)[1:10],length(mydf$Level2),replace=TRUE)
-  mydf$Level3<-sample(unique(mydf$Level3)[1:10],length(mydf$Level3),replace=TRUE)
-  mydf$Level4<-sample(unique(mydf$Level4)[1:10],length(mydf$Level4),replace=TRUE)
-  mydf$Level5<-sample(unique(mydf$Level5)[1:10],length(mydf$Level5),replace=TRUE)
-  
-  mydata<-mutate_at(mydata,.funs = funs(as.factor),
-                    .vars = vars(matches("SiteName|ChannelName|Item|week|month|year"))) %>%
-    mutate_at(.funs = funs(as.character),
-              .vars = vars(matches(paste(c("Level"),collapse="|")))) %>%
-    mutate_at(.funs = funs(as.factor),
-              .vars = vars(matches(paste(c("Level"),collapse="|")))) 
-  
-  mydf<-mutate_at(mydf,.funs = funs(as.factor),
-                    .vars = vars(matches("SiteName|ChannelName|Item|week|month|year"))) %>%
-    mutate_at(.funs = funs(as.character),
-              .vars = vars(matches(paste(c("Level"),collapse="|")))) %>%
-    mutate_at(.funs = funs(as.factor),
-              .vars = vars(matches(paste(c("Level"),collapse="|")))) 
-  
-  return(list(mydata=mydata,mydf=mydf))
-}
-
-generate_price_sales<-function(seed,N,TT,mydf,fs,het_beta0,price_fixed_effect=0,sales_fixed_effect=0,...) {
-  set.seed(seed)
-  residuals<-generate_residuals(seed=seed,TT=TT,N=N,...)
-  P.tilde=matrix(residuals$P.tilde,ncol=TT)
-  U=matrix(residuals$U,ncol=TT)
-  
-  P.tilde_first_diff=matrix(residuals$P.tilde_first_diff,ncol=TT)
-  U_first_diff=matrix(residuals$U_first_diff,ncol=TT)
-  
-  logpr<-matrix(0,N,TT)
-  logsls<-matrix(0,N,TT)
-  logprice<-matrix(0,N,TT)
-  logsales<-matrix(0,N,TT)
-  
-  logprice_lag<-matrix(0,N,TT)
-  logsales_lag<-matrix(0,N,TT)
-  logprice_lag_2<-matrix(0,N,TT)
-  logsales_lag_2<-matrix(0,N,TT)
-  logprice_lag_3<-matrix(0,N,TT)
-  logsales_lag_3<-matrix(0,N,TT)
-  logprice_lag_4<-matrix(0,N,TT)
-  logsales_lag_4<-matrix(0,N,TT)
-  
-  logsales_lag_4[,1]<-logsales_lag_3[,1]<-logsales_lag_2[,1]<-logsales_lag[,1]<-logsales[,1]<-sales_fixed_effect
-  logprice_lag_4[,1]<-logprice_lag_3[,1]<-logprice_lag_2[,1]<-logprice_lag[,1]<-logprice[,1]<-price_fixed_effect
-  week<-matrix(0,N,TT)
-  
-  
-  
-  for (t in 5:TT) {
-    ### logprice first difference 
-    
-
-    
-    ## logpr = logprice - logprice_lag
-    logpr[,t]<-predict(fs$treat.fit,mydf)+ P.tilde_first_diff[,t]
-    ## generate logprice from logprice_lag and its first difference
-    logprice[,t]<-logpr[,t]+logprice[,t-1]+price_fixed_effect
-    
-    ## logsls = logsales - logprice_lag
-    logsls[,t]<-predict(fs$outcome.fit,mydf)+(het_beta0)*P.tilde_first_diff[,t] + U_first_diff[,t]
-    ## generate logprice from logprice_lag and its first difference
-    logsales[,t]<-logsls[,t]+logsales[,t-1]+sales_fixed_effect
-    
-
-    week[,t]<-t
-    mydf$logprice_lag_4<-mydf$logprice_lag_3
-    mydf$logprice_lag_3<-mydf$logprice_lag_2
-    mydf$logprice_lag_2<-mydf$logprice_lag
-    mydf$logprice_lag<-logprice[,t]
-    
-    mydf$logsales_lag_4<-mydf$logsales_lag_3
-    mydf$logsales_lag_3<-mydf$logsales_lag_2
-    mydf$logsales_lag_2<-mydf$logsales_lag
-    mydf$logsales_lag<-logsales[,t]
-    
-    
-    logsales_lag[,t]<-logsales[,t-1]
-    logsales_lag_2[,t]<-logsales[,t-2]
-    logsales_lag_3[,t]<-logsales[,t-3]
-    logsales_lag_4[,t]<-logsales[,t-4]
-    
-    
-    
-    logprice_lag[,t]<-logprice[,t-1]
-    logprice_lag_2[,t]<-logprice[,t-2]
-    logprice_lag_3[,t]<-logprice[,t-3]
-    logprice_lag_4[,t]<-logprice[,t-4]
-   
-    
-  }
-  return(data.frame(logsales=as.numeric(logsales),
-                    logprice=as.numeric(logprice),
-                    logsales_lag=as.numeric(logsales_lag),
-                    logprice_lag=as.numeric(logprice_lag),
-                    logsales_lag_2=as.numeric(logsales_lag_2),
-                    logprice_lag_2=as.numeric(logprice_lag_2),
-                    logsales_lag_3=as.numeric(logsales_lag_3),
-                    logprice_lag_3=as.numeric(logprice_lag_3),
-                    logsales_lag_4=as.numeric(logsales_lag_4),
-                    logprice_lag_4=as.numeric(logprice_lag_4),
-                    logprice_1df=as.numeric(logpr),
-                    logsales_1df=as.numeric(logsls),
-                    het_beta0 = as.numeric(kronecker(rep(1,TT),het_beta0)),
-                    P.tilde=as.numeric(P.tilde),
-                    U=as.numeric(U),
-                    P.tilde_first_diff=as.numeric(P.tilde_first_diff),
-                    U_first_diff=as.numeric(U_first_diff),
-                    week=as.numeric(week),
-                    Item=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Item))))),
-                    SiteName=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$SiteName))))),
-                    ChannelName=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$ChannelName))))),
-                    Level1=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Level1))))),
-                    Level2=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Level2))))),
-                    Level3=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Level3))))),
-                    Level4=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Level4))))),
-                    Level5=as.factor(as.character(kronecker(rep(1,TT),as.numeric(as.character(mydf$Level5)))))
+    Q.tilde=as.numeric(Q.tilde)
   ))
+  
 }
 
-
-#### First Stage ###
-## first stage in first differences
-
-first_stage_1df<-function(treat,outcome,mydata,
-                          first_stage_price_formula,
-                          first_stage_sales_formula,
-                          inds_train) {
+generate_first_stage<-function(epsilon.own,TT,N,p,alpha_price, alpha_P, alpha_E,delta_P,delta_E,delta_K,...) {
   
-  t.treat<-lm(first_stage_price_formula,mydata[inds_train,])
-  treat.fit<-predict(t.treat,mydata)
-  res.treat<-treat-treat.fit
+  ### begin with generate second stage 
   
-  t.out<-lm(first_stage_sales_formula,mydata[inds_train,])
-  outcome.fit<-predict(t.out,mydata)
-  res.outcome<-outcome-outcome.fit
-  return(list(outcome = res.outcome, 
-              treat = res.treat,
-              treat.fit=t.treat,
-              outcome.fit=t.out))
-}
-
-
-## first stage in levels
-
-first_stage<-function(treat,outcome,mydata,
-                      first_stage_price_formula,
-                      first_stage_sales_formula,
-                      inds_train,inds_test=NULL) {
-
-  if (is.null(inds_test)) {
-    inds_test<-1:dim(mydata)[1]
+  
+  data<-generate_second_stage(epsilon.own=epsilon.own,TT=TT,N=N,...)
+  
+  P=P.tilde=data$P.tilde
+  Q.tilde=data$Q.tilde
+  Q=U=data$U
+  het_controls1=data[,1:length(epsilon.own)]
+  
+  P<-matrix(P, ncol=TT)
+  P.tilde<-matrix(P.tilde,ncol=TT)
+  Q<-matrix(Q,ncol=TT)
+  U<-matrix(U,ncol=TT)
+  p_het = length(epsilon.own)
+  
+  
+  
+  ## generate first-stage time-variant strictly exogenous controls
+  
+  
+  std_controls<-matrix(rnorm(N*TT*p),ncol=p)
+  cov_matrix<-toeplitz(rho^(c(0:(p-1))))
+  controls<-std_controls%*%chol(cov_matrix)
+  
+  het_controls<-array(0,c(N,p_het,TT))
+  for (j in 1:p_het) {
+    het_controls[,j,]<-matrix(data[,j],ncol=TT)
   }
-    t.treat<-lm(first_stage_price_formula,mydata[inds_train,])
-  treat.fit<-predict(t.treat,mydata[inds_test,])
-  res.treat<-treat[inds_test]-treat.fit
+  fsstage_controls<-array(0,c(N,p,TT)) 
+  for (j in 1:p) {
+    fsstage_controls[,j,]<-matrix(controls[,j],ncol=TT)
+  }
+  
+  for (t in 3:TT) {
     
-  fe_pdata<-model.matrix(first_stage_sales_formula,data=mydata )
-  controls<-as.matrix(fe_pdata)
-  n_items<-length(grep("Item",colnames(fe_pdata),value=TRUE))
-  penalty.factor.outcome=c(0,rep(1/sqrt(n_items),n_items),rep(1,length(colnames(fe_pdata))-n_items-1))
-  lambda.outcome=qnorm(1-0.1/(2*dim(fe_pdata)[2]))/sqrt(length(inds_train))
+    P[,t]<-alpha_price[1]*P[,t-1]+alpha_price[2]*P[,t-2]+fsstage_controls[,,t]%*%delta_P + het_controls[,,t]%*%delta_K+alpha_P+P.tilde[,t]
+    Q[,t]<-P[,t]*(het_controls[,,t]%*%epsilon.own) +fsstage_controls[,,t]%*%delta_E+ alpha_E+ U[,t]
+  }
+  
+  ##
+  
+  P1<-P0<-fsstage_controls[,,1]%*%delta_P 
+  Q1<-Q0<-fsstage_controls[,,1]%*%delta_E
+  
+  ## create lags of order 1
+  Q_lag<-cbind(Q0,Q[,1:(TT-1)])
+  P_lag<-cbind(P0,P[,1:(TT-1)])
+  
+  ## create lags of order 2
+  Q_lag2<-cbind(Q0,Q0,Q[,1:(TT-2)])
+  P_lag2<-cbind(P0,P0,P[,1:(TT-2)])
   
   
-  t.out<-glmnet(controls[inds_train,], outcome[inds_train],
-                family="gaussian",
-                standardize=TRUE,
-                intercept=TRUE,
-                penalty.factor=penalty.factor.outcome,
-                lambda=lambda.outcome)
-  # computed predicted values
-  predicted<- predict(t.out,newx=controls[inds_test,])
-  # take residuals between observed and predicted only on inds.test
-  res.outcome<-as.numeric(outcome[inds_test]-predicted)
+  data=list(Q=as.numeric(Q),
+            P=as.numeric(P),
+            Q.tilde=as.numeric(Q.tilde),
+            P.tilde=as.numeric(P.tilde),
+            Q_lag=as.numeric(Q_lag),
+            Q_lag2=as.numeric(Q_lag2),
+            P_lag=as.numeric(P_lag),
+            P_lag2=as.numeric(P_lag2),
+            het_controls=het_controls1,
+            controls=controls)
   
-  return(list(outcome = res.outcome, 
-              treat = res.treat,
-              treat.fit=t.treat,
-              outcome.fit=t.out))
   
+  
+  return(data)
 }
 
 
-##### Second stage #####
-
-second_stage<-function(mydata,fs,
-                       grouping_level,
-                       categoryname,
+second_stage<-function(fs,
                        second_stage_method_names,
-                       controls,target_controls,
+                       controls,
+                       target_controls,
+                       nonzero_coords,
                        ...) {
-   treat_res<-fs$treat
+  treat_res<-fs$treat
   outcome_res<-fs$outcome
- #controls<-as.matrix(mydata[,grep("controls",colnames(mydata),value=TRUE)])
+  #controls<-as.matrix(mydata[,grep("controls",colnames(mydata),value=TRUE)])
   het_treat<-matrix(rep(treat_res,dim(controls)[2]),ncol= dim(controls)[2])*controls
-
-  ## run second stage regression
-  res<-data.frame(RowID=target_controls[,1])
-  est<-data.frame(RowID=rep(1,dim(controls)[2]))
+  
   htheta<-list()
+  res<-data.frame(RowID=c(1:dim(target_controls)[1]))
+  est<-data.frame(RowID=c(1:dim(controls)[2]))
   for (method_name in second_stage_method_names) {
+    
     # get second stage estimator
-    method<-get(method_name)
+    
+    if (method_name == "DebiasedGLasso") {
+      result<-DebiasedLasso(x=het_treat,y=outcome_res,htheta=htheta[["GLasso"]],...)
+    } else {
+      method<-get(method_name)
+    }
+    
+    
+    if (method_name =="GLasso") {
+      
+      phet<-dim(controls)[2]
+      covs<-cbind(het_treat,controls)
+      
+      
+      lambda = lambdamax(x=covs, y = outcome_res, index = c(NA,2:phet,NA,2:phet), penscale = sqrt,
+                         model = LinReg())/100
+      fit<-grplasso(x=covs,y=outcome_res,index=c(NA,2:phet,NA,2:phet),standardize=TRUE,model=LinReg(),   penscale = sqrt,lambda=lambda)
+      result<-list()
+      result$estimator<-fit$coefficients[1:p_het]
+      htheta[["GLasso"]]<-result$estimator
+      
+    }
+    
+    
+    
     if (method_name =="DebiasedLasso") {
       # execute estimator 
       result<-method(x=het_treat,y=outcome_res,htheta=htheta[["Lasso"]],...)
       
-    } else {
-      # execute estimator 
+    } 
+    
+    if (method_name=="Lasso") {
       result<-method(x=het_treat,y=outcome_res,...)
-      if (method_name=="Lasso") {
-        htheta[["Lasso"]]<-result$estimator
-      }
+      htheta[["Lasso"]]<-result$estimator
     }
     
+    if (method_name == "OLS") {
+      
+      result<-method(x=het_treat,y=outcome_res,...)
+      
+      
+    }
+    
+    if (method_name == "Oracle") {
+      fit<-method(x=het_treat[,nonzero_coords],y=outcome_res,...)
+      result<-list()
+      result$estimator<-true_epsilon.own
+      result$estimator[nonzero_coords]<-fit$estimator
+      result$estimator[setdiff(c(1:p_het),nonzero_coords)]<-0
+    }
+    
+    if (method_name == "True") {
+      
+      result<-list()
+      result$estimator<-true_epsilon.own
+    }
+    
+    # execute estimator 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     # add variance estimator for OLS and Ridge
-    res[,method_name]<-data.frame(est =as.numeric(target_controls%*%result$estimator))
-    est[,method_name]<-data.frame(est =as.numeric(result$estimator))
+    res[,method_name]<-as.numeric(target_controls%*%result$estimator)
+    est[,method_name]<-as.numeric(result$estimator)
     #res[[method_name]]$RowID<-hard_coded_unique_categories_with_rowid[,"RowID"]
     
   }
@@ -269,9 +200,9 @@ second_stage<-function(mydata,fs,
     estimates=estimates))
   
   
-  
-  
 }
+
+
 
 ##### helper functions ####
 
