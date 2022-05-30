@@ -18,14 +18,26 @@ outcome_name="logsales"
 categoryname="Dairy"
 my_cons=0.05
 
-my_data<-read.csv(paste0(directoryname,"/processed_data/",categoryname,".csv"),
-                  colClasses = c( "week" = "factor",
-                                  "month"="factor",
-                                  "SiteName"="factor",
-                                  "ChannelName"="factor",
-                                  "Item" = "factor",
-                                  "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
-                                  "Level5"="factor"))
+my_data1<-read.csv(paste0(directoryname,"/processed_data/NonEdible1.csv"),
+                   colClasses = c( "week" = "factor",
+                                   "month"="factor",
+                                   "SiteName"="factor",
+                                   "ChannelName"="factor",
+                                   "Item" = "factor",
+                                   "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
+                                   "Level5"="factor"))
+
+
+
+my_data2<-read.csv(paste0(directoryname,"/processed_data/NonEdible2.csv"),
+                   colClasses = c( "week" = "factor",
+                                   "month"="factor",
+                                   "SiteName"="factor",
+                                   "ChannelName"="factor",
+                                   "Item" = "factor",
+                                   "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
+                                   "Level5"="factor"))
+my_data<-rbind(my_data1,my_data2)
 
 colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
 my_data$RowID<-as.character(my_data$RowID)

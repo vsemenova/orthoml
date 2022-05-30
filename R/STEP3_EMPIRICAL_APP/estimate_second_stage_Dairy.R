@@ -32,14 +32,27 @@ tabledirectory=paste0(directoryname,"/Tables/")
 
 categoryname="Dairy"
 
-my_data<-read.csv(paste0(directoryname,"/processed_data/",categoryname,".csv"),
-                  colClasses = c( "week" = "factor",
-                                  "month"="factor",
-                                  "SiteName"="factor",
-                                  "ChannelName"="factor",
-                                  "Item" = "factor",
-                                  "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
-                                  "Level5"="factor"))
+
+my_data1<-read.csv(paste0(directoryname,"/processed_data/Dairy1.csv"),
+                   colClasses = c( "week" = "factor",
+                                   "month"="factor",
+                                   "SiteName"="factor",
+                                   "ChannelName"="factor",
+                                   "Item" = "factor",
+                                   "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
+                                   "Level5"="factor"))
+
+
+
+my_data2<-read.csv(paste0(directoryname,"/processed_data/Dairy2.csv"),
+                   colClasses = c( "week" = "factor",
+                                   "month"="factor",
+                                   "SiteName"="factor",
+                                   "ChannelName"="factor",
+                                   "Item" = "factor",
+                                   "Level1"="factor","Level2"="factor","Level3"="factor","Level4"="factor",
+                                   "Level5"="factor"))
+my_data<-rbind(my_data1,my_data2)
 colnames(my_data)[colnames(my_data)=="X"]<-"RowID"
 my_data$RowID<-as.character(my_data$RowID)
 subset_inds<-inds_test<-(1:dim(my_data)[1])
@@ -79,7 +92,7 @@ ss_estimates<-main(my_data=cbind(fs,my_data),
                    xlim=c(-7,0.5),figdirectory=figdirectory,table=FALSE,all_levels=c("Level1_Name",    "Level2_Name","Level3_Name"))
 ss_estimates<-left_join(ss_estimates,my_data[,c("Level1","Level2","Level3",
                                                 "Level1_Name","Level2_Name","Level3_Name")])
-#write.table(print(xtable(ss_estimates[,c(2:3,6,10,4,5,9,7,10,11)],digits=3),include.rownames=FALSE), paste0(tabledirectory,"/",categoryname,"/Level3.txt"))
+write.table(print(xtable(ss_estimates,digits=3),include.rownames=FALSE), paste0(tabledirectory,"/",categoryname,"/Level3.txt"))
 
 
   het.name<-c("Level1","Level2","Level3","Level4")

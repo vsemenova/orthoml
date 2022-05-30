@@ -133,7 +133,7 @@ level1_inds_list[[4]]<-c(27,6,28,25)
 category_list[[4]]<-"Snacks"
 
 
-for (k in 3:4) {
+for (k in c(2,3,4)) {
   ## take level 1 inds corresponding to a category
   level1_inds<<-level1_inds_list[[k]]
   categoryname<-category_list[[k]]
@@ -157,8 +157,13 @@ for (k in 3:4) {
               .vars = vars(matches(paste(c("Level"),collapse="|"))))
   my_data_subset$month_name<-month.abb[my_data_subset$month]
   #my_data_subset$Level2_Name
-  write.csv(my_data_subset,paste0(directoryname,"/processed_data/",categoryname,".csv"))
-  print(dim(my_data_subset))
-  #write.csv(my_data_subset[1:222691,],paste0(directoryname,"/processed_data/",categoryname,"1.csv"))
-  # write.csv(my_data_subset[222692:445382,],paste0(directoryname,"/processed_data/",categoryname,"2.csv"))
+  
+  if (k==4) {
+    write.csv(my_data_subset,paste0(directoryname,"/processed_data/",categoryname,".csv"))
+    print(dim(my_data_subset))
+  } else {
+    write.csv(my_data_subset[1:222691,],paste0(directoryname,"/processed_data/",categoryname,"1.csv"))
+     write.csv(my_data_subset[222692:dim(my_data_subset)[1],],paste0(directoryname,"/processed_data/",categoryname,"2.csv"))
+    
+  }
 }

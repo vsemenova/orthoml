@@ -122,16 +122,14 @@ for (j in 1:length(sample_sizes)) {
     res.treat<-t.treat$res
     
     
-    
-    if (TRUE) {
-      
+ 
       t.outcome<-remove_wrapper(controls=cbind(covs.outcome[sample_inds,],kronecker(rep(1,Tmax), diag(n_items) )),
                                 target =data$Q[sample_inds],
                                 penalty.factor=penalty.factor.outcome,
                                 lambda=lambda.outcome)
       
       res.outcome<-t.outcome$res + res.treat*(as.matrix(het_controls[sample_inds,])%*%as.numeric(t.outcome$fit.c$beta[1:p_het]))
-    }
+    
     
     
     
@@ -176,7 +174,7 @@ print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2]))),digits = 3),a
 
 write.table(
   print(xtable(result,align =paste0(c("c|",rep("c",dim(result)[2])))),add.to.row=addtorow, include.colnames=F,
-        include.rownames=T),paste0(directoryname,"/Tables/main.txt"))
+        include.rownames=T),paste0(directoryname,"/Tables/main_sims.txt"))
 
 
 
