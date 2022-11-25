@@ -1,5 +1,5 @@
 # orthoml
-Code associated with paper: "Estimation and Inference on Heterogeneous Treatment Effects in High-Dimensional Dynamic Panels" Semenova, Goldman, Chernozhukov, Taddy (2017) 
+Code associated with paper: "Estimation and Inference on Heterogeneous Treatment Effects in High-Dimensional Dynamic Panels under Weak Dependence" Semenova, Goldman, Chernozhukov, Taddy (2022), Quantitative Economics, conditionally accepted
 
 # Introduction
 ## Data
