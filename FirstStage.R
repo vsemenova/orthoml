@@ -66,33 +66,3 @@ remove_wrapper<-function(controls,target,inds_train,penalty.factor=rep(1,dim(con
   
   return(list(res=res,  fit.c =fit.c))
 }
-
-first_stage_1d<-function(treat,outcome,mydata,
-                         first_stage_price_formula,
-                         first_stage_sales_formula,...) {
-  
-  #fe_pdata<-model.matrix(first_stage_price_formula,data=my_data )
-  ### Residualize sales
-  ### ... are settings of method.controls
-  show("Partialling out controls from the treatment ...")
-  ### extract treatment, outcome, and controls
-  
-  
-  t.treat<-lm(first_stage_price_formula,my_data)
-  treat.fit<-predict(t.treat,my_data)
-  res.treat<-treat-treat.fit
-  
-  ### Residualize prices
-  show("Partialling out controls from the outcome ...")
-  
-  
-  t.outcome<-lm(first_stage_sales_formula,my_data)
-  outcome.fit<-predict( t.outcome,my_data)
-  res.outcome<-outcome-outcome.fit
-  
-  return(list(outcome = res.outcome, 
-              treat = res.treat,
-              treat.fit=t.treat,
-              outcome.fit=t.outcome))
-}
-

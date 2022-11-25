@@ -12,8 +12,8 @@ second_stage<-function(my_data,
     mutate_at(.funs = funs(as.factor),
               .vars = vars(matches(paste(c("Level"),collapse="|")))) %>%
     model.matrix(as.formula(paste0("~",het.name,collapse="+")),.)
-  ## double check absense of multicollinearity
   
+  ## drop categories that create multicollinearity
   hard_coded_categories<-hard_coded_categories[,setdiff(colnames(hard_coded_categories), names_to_exclude)]
   hard_coded_categories_withrowid<-select(my_data,het.name,RowID) %>%
     mutate_at(.funs = funs(as.factor),
@@ -52,12 +52,7 @@ second_stage<-function(my_data,
       res[[method_name]]<-data.frame(est =as.numeric(hard_coded_unique_categories%*%result$estimator) )
       htheta[[method_name]]<-result$estimator
     }
-    if (method_name == "Lasso2") {
-      result<-Lasso2(x=het_treat,y=outcome_res,...)
-      res[[method_name]]<-data.frame(est =as.numeric(hard_coded_unique_categories%*%result$estimator) )
-      htheta[["Lasso"]]<-result$estimator
-    }
-    
+   
     if (method_name == "DebiasedLasso") {
       result<-DebiasedLasso(x=het_treat,y=outcome_res,htheta = htheta[["Lasso"]],...)
       res[[method_name]]<-data.frame(est =as.numeric(hard_coded_unique_categories%*%result$estimator),
