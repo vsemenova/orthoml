@@ -2,15 +2,6 @@
 Code associated with paper: "Estimation and Inference on Heterogeneous Treatment Effects in High-Dimensional Dynamic Panels under Weak Dependence" Semenova, Goldman, Chernozhukov, Taddy (2022), Quantitative Economics, conditionally accepted
 
 # Introduction
-## Data
-AggData*.csv for * in {Drinks, DairyPart1, DairyPart2, NonEdible1, NonEdible2, Snacks} contains anonymized grocery sales data from a food distributor. The grocery items are sold at 8 different sites, via 2 different channels (Collection, Delivery), in the years 2012-2017. Using catalog descriptions, we organize the products into a tree (see example below)
-![Figure_1 copy](https://user-images.githubusercontent.com/21160786/56327155-1b4b4200-6147-11e9-8837-694417ae332b.png)
-
-To preserve the distributor's anonymity, we replaced the names of the nodes at Level 2 and below by numbers (for Drinks Level 3 and below) by numbers. We also added lags of sales and prices.  The resulting data set takes the form:
-
-![Screenshot 2019-04-24 18 05 08](https://user-images.githubusercontent.com/21160786/56697127-e9445d80-66bb-11e9-95b6-4fb137841df2.png)
-
-
 
 ## Code
 
@@ -33,7 +24,6 @@ The code produces the estimate and 95% confidence interval for the average price
 
 The code produces the estimate and 95% confidence interval for the average price elasticity by calendar month for each category in {Dairy, NonEdible, Snacks, Sodas, Water}. A plot example is given below
 
-![BoxDrinksmonthSodas](https://user-images.githubusercontent.com/21160786/56698599-7f7a8280-66c0-11e9-8023-23353d600cdd.png)
 
 ### Figure : Distribution of Own price elasticities as estimated by Orthogonal Lasso, Double Orthogonal Ridge, and Orthogonal Least Squares 
 
