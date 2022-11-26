@@ -1,7 +1,9 @@
 rm(list=ls())
+
+
 # set directoryname here
-directoryname<-"/n/tata/orthoml/"
-#directoryname<-"/Users/virasemenova/Dropbox (MIT)/orthoml_draft/"
+directoryname<-"/Users/virasemenova/Dropbox (MIT)/MSR/OrthoML/MS1670_All_files/Code/"
+
 setwd(directoryname)
 
 ## uncomment this line when first-time running
@@ -18,7 +20,7 @@ outcome_name="logsales"
 categoryname="Snacks"
 my_cons=0.05
 
-my_data<-read.csv(paste0(directoryname,"/",categoryname,".csv"),
+my_data<-read.csv(paste0(directoryname,"/data/",categoryname,".csv"),
                   colClasses = c( "week" = "factor",
                                   "month"="factor",
                                   "SiteName"="factor",
@@ -61,7 +63,7 @@ controls<-as.matrix(fe_pdata)
 
 n_items<-length(grep("Item",colnames(fe_pdata),value=TRUE))
 ### unpenalize treatment interactions with logprice_lag and logprice_lag_2
-penalty.factor.treat=c(0,rep(1/sqrt(n_items),n_items),rep(1,length(colnames(fe_pdata))-n_items-5),rep(0,4))
+penalty.factor.treat=c(0,rep(1,length(colnames(fe_pdata))-5),rep(0,4))
 lambda.treat=2*(log(length(inds_train)))^(3/2)/sqrt(length(inds_train))
 
 
@@ -80,7 +82,7 @@ rownames(t.treat$fit.c$beta)<-sapply(rownames(t.treat$fit.c$beta), make.name)
 fe_pdata<-model.matrix(first_stage_sales_formula,data=my_data )
 controls<-as.matrix(fe_pdata)
 n_items<-length(grep("Item",colnames(fe_pdata),value=TRUE))
-penalty.factor.outcome=c(0,rep(1/sqrt(n_items),n_items),rep(1,length(colnames(fe_pdata))-n_items-1))
+penalty.factor.outcome=c(0,rep(1,length(colnames(fe_pdata))-1))
 lambda.outcome=my_cons*(log(length(inds_train)))^(3/2)/sqrt(length(inds_train))
 
 
