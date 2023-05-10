@@ -1,0 +1,109 @@
+README for data and code for 
+
+
+Semenova, Goldman, Chernozhukov, and Taddy (2022), “Estimation and Inference on Heterogeneous Treatment Effects in High-Dimensional Dynamic Panels” Quantitative Economics, conditionally accepted. 
+
+The data come from a major European food distributor that sells to retailers. To preserve its anonymity, the names of product categories were converted into a numeric code. The released data contains the numeric code only. The reported tables contain the numeric code as well as a close synonym to the original product category name.  For questions about data, please contact Matt Goldman 
+ 
+
+==================
+DATA
+
+==================
+
+The main dataset is Snacks.csv. A single observation in this dataset is a sales timestamp. The data contains the following variables: 
+
+variable name   type                                    description
+---------------------------------------------------------------------------------------
+SiteName          categorical                         id of selling site/location, ranges 1-8
+SalesDate         timestamp                          timestamp of sales
+ChannelName   categorical                         delivery channel (collection/delivery)
+Item                   categorical                         product code
+Week                 categorical
+Month                categorical
+Year                   categorical      
+Level1                                                          product grouping at Level 1 (e.g., Drinks/Snacks/Protein)
+Level2                                                          -//- at Level 2 (e.g., for Drinks: Sodas, Alcohol, Water)
+Level3                                                          -//- at Level 3
+Level4                                                          -//- at Level 4
+LogPrice             numeric                           log price
+LogPrice_lag
+LogPrice_lag_2
+LogPrice_lag_3
+LogPrice_lag_4
+LogSales            numeric                           log sales 
+LogSales_lag
+LogSales_lag_2
+LogSales_lag_3
+LogSales_lag_4
+
+
+==================
+Code
+==================
+
+To replicate Figure 2,  one should execute the two files below in the following order
+
+filename                                     input file                                                                              output file                                                        description     
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+estimate_first_stage_Snacks.R              Snacks.csv,                                   first_stage/FirstStagePrice.csv             LASSO regression of log-price (log-sales) on covariates,
+                                                                                                        first_stage/FirstStageSales.csv                          fitted values and residuals
+
+                                                                                                       Tables/price_eq.txt,                                              first-stage coefficients, penalty choice, sample size for price 
+                                                                                                       Tables/sales_eq.txt,                                             first-stage coefficients, penalty choice, sample size for sales 
+
+
+
+estimate_second_stage_Snacks.R      first_stage/FirstStageSnacks.csv      Figures/HistLevel2Snacks.png,           estimates elasticities for products at grouping Level2, Level3
+                                                                                                                                     HistLevel3Snacks.png                      
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Here is a list of auxiliary R commands 
+
+
+filename                                                                                         description     
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FirstStage.R                                           
+	first_stage                            a wrapper function for first-stage log (price) and log(sales) regression
+           remove_wrapper                  computes residuals
+
+SecondStage.R
+	second_stage                       1. drops multi collinear dummies 
+                                                        2.creates a second-stage matrix of hierarchy fixed effects (hard_coded_categories);
+                                                        3. interacts this matrix with price residual
+                                                        4. Estimates  HTE vector beta_0 using Lasso, OLS or Debiased Lasso (determined by  second_stage_method_names) 
+                                                        5. Estimates CATE function == a vector of heterogenous elasticities (i.e., by multiplying the matrix of hierarchy fixed effects by CATE). Returns a vector of distinct heterogenous elasticities
+
+
+
+Main.R                                            1. Executes second_stage. Retrieves a vector of distinct heterogenous elasticities
+                                                        2. Plots and saves a histogram of estimated elasticities
+
+                    
+
+auxiliary.R            
+
+
+ss_methods.R                                   OLS, Lasso, DebiasedLasso functions
+         OLS
+         Lasso
+         DebiasedLasso
+
+utils_app.R
+        drop_multicollinear_categories  drops multicollinear categories
+        hist_coef                                     plots and saves a histogram of estimated elasticities
+                                    
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                    
+
