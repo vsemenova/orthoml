@@ -4,6 +4,7 @@ Code associated with paper: "Estimation and Inference on Heterogeneous Treatment
 # Introduction
 
 ## Code
+To replicate Figure 1, please run Figure1Code.R in the main folder. 
 
 To replicate Figure 2,  one should execute the two files below in the following order
 
